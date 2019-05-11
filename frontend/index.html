@@ -1,0 +1,41 @@
+<html>
+  <head>
+  </head>
+  <body>
+      <h4>Sample front-end:</h4>
+      <button id="thebutton" type="button">Click to send</button>
+      <script src="./stomp.js"></script>
+      <script>   
+
+          //The URL here is the host defined in our cloudamqp instance "Details" page:
+          // https://api.cloudamqp.com/console/46d98225-365c-45d1-9d7e-a7ac46c0a8a7/details
+          var wss = new WebSocket("wss://frosty-dinosaur.rmq.cloudamqp.com/ws/");
+
+          //Set up a Web STOMP client & connect it to our websocket:
+          var client = Stomp.over(wss);
+
+          // Connect our websocket to the cloudaqmp instance.  The uname & password are 
+          // also on the details page.  Note that the uname and the vhost are the same.
+          var uname = 'dywnibnv'
+          var pword = '2seG_JlWA4HhezPdivmicDLmgpmmb5w1';
+          var res = client.connect(uname, pword, onConn, onErr, uname);
+
+          var onConn = () => {
+            console.log('connected');
+          }
+
+          var onErr = (e) => {
+            console.log('Error:  ' + e);
+          }
+
+          // When the button is clicked, send 'test msg' to the "fromZaneh" queue
+          // via our websocket. 
+          document.getElementById('thebutton').onclick = () => {
+            client.send('/queue/fromZaneh', {}, 'test msg'); 
+          }  
+
+          // Responses will be on the "toZaneh" queue
+          
+      </script> 
+  </body>
+</html>
